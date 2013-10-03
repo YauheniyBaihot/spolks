@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -21,8 +23,8 @@ int main (int argc, char *argv[])
     }
 
 	addr.sin_family = AF_INET;
-    addr.sin_port = htons(4444);
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(atoi(argv[2]));
+    addr.sin_addr.s_addr = inet_addr(argv[1]);
     if(bind(listener, (struct sockaddr *)&addr, sizeof(addr))<0)
     {
         perror("bind");
@@ -46,11 +48,7 @@ int main (int argc, char *argv[])
             if(bytes_read <= 0) 
 				break;
 			else 
-            {
-                int i;
-                for(i = 0; i < bytes_read; i++)
-                    printf("%c", buf[i]);
-            }
+		send(sock,buf,bytes_read,0);
 				
         }
     
@@ -58,4 +56,6 @@ int main (int argc, char *argv[])
     }
     return 0;
 }
+
+
 
